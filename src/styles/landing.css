@@ -1,0 +1,906 @@
+/* Dopple Press–inspired: risograph paper, pink & baby-blue ink, bold borders */
+
+:root {
+  --ink: #141414;
+  --paper: #ebe4d8;
+  --paper-bright: #f7f3eb;
+  --riso-pink: #e85d75;
+  --riso-pink-soft: rgba(232, 93, 117, 0.55);
+  --riso-blue: #6eb4d6;
+  --riso-blue-soft: rgba(110, 180, 214, 0.65);
+  --riso-yellow: #e8c547;
+  --font-display: Unbounded, system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--paper);
+}
+
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes riso-drift {
+  0%,
+  100% {
+    background-position:
+      12% 22%,
+      88% 18%,
+      50% 88%,
+      78% 72%;
+  }
+  50% {
+    background-position:
+      22% 28%,
+      78% 24%,
+      48% 82%,
+      68% 78%;
+  }
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse 85% 70% at 8% 12%, var(--riso-pink-soft), transparent 52%),
+    radial-gradient(ellipse 78% 65% at 94% 8%, var(--riso-blue-soft), transparent 50%),
+    radial-gradient(ellipse 70% 55% at 92% 88%, rgba(232, 197, 71, 0.35), transparent 48%),
+    radial-gradient(ellipse 90% 40% at 48% 96%, rgba(232, 93, 117, 0.2), transparent 55%),
+    linear-gradient(180deg, #f2ebe1 0%, var(--paper) 45%, #e5ddd2 100%);
+  background-size: 180% 180%, 170% 170%, 160% 160%, 150% 150%, 100% 100%;
+  background-position: 12% 22%, 88% 18%, 50% 88%, 78% 72%, 50% 50%;
+  background-attachment: fixed;
+  animation: riso-drift 36s ease-in-out infinite;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background: radial-gradient(
+    ellipse 92% 88% at 50% 48%,
+    transparent 52%,
+    rgba(212, 200, 182, 0.45) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+}
+
+::-webkit-scrollbar-button {
+  width: 1px;
+  height: 1px;
+}
+
+.album-page {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+}
+
+.album-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5), transparent 42%);
+}
+
+.book-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: stretch;
+  pointer-events: none;
+  overflow: visible;
+  background: transparent;
+  backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0))))
+    saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
+  -webkit-backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0))))
+    saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
+  transition: opacity 560ms ease;
+}
+
+.book-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 58% at 12% 20%, rgba(232, 93, 117, 0.16), transparent 55%),
+    radial-gradient(ellipse 68% 52% at 88% 16%, rgba(110, 180, 214, 0.18), transparent 52%),
+    radial-gradient(ellipse 60% 45% at 50% 92%, rgba(232, 197, 71, 0.12), transparent 50%),
+    linear-gradient(165deg, rgba(247, 243, 235, 0.94) 0%, rgba(235, 228, 216, 0.9) 45%, rgba(237, 244, 248, 0.88) 100%);
+  opacity: calc(max(0, 1 - var(--book-open, 0) * 1.12));
+}
+
+.book-intro.is-hidden {
+  opacity: 0;
+}
+
+.book-cover-stage {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  min-height: 0;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+  padding: clamp(10px, 2.2vmin, 22px);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.book-hinge-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  perspective: min(2600px, 200vw);
+  perspective-origin: 0% 50%;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.book-spine {
+  width: clamp(11px, 1.5vmin, 20px);
+  flex-shrink: 0;
+  align-self: stretch;
+  background: linear-gradient(90deg, #1e1c1b 0%, #3f3b37 38%, #2c2a28 100%);
+  border-right: 2px solid var(--ink);
+  box-shadow: 3px 0 14px rgba(0, 0, 0, 0.14);
+}
+
+.book-pivot {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  transform-style: preserve-3d;
+  overflow: visible;
+}
+
+.book-board {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transform: rotateY(calc(var(--book-open, 0) * -176deg));
+  will-change: transform;
+}
+
+.book-board-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.book-board-face--front {
+  display: flex;
+  flex-direction: column;
+}
+
+.book-board-face--front .book-cover-stamp {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.book-board-face--back {
+  transform: rotateY(180deg);
+  background: linear-gradient(155deg, #ebe4d8 0%, #ddd4c8 45%, #cfc5b6 100%);
+  border: 2px solid var(--ink);
+  border-radius: 1px;
+  box-sizing: border-box;
+}
+
+.book-board-back-inner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.book-board-back-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.book-board-back-print {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(28px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.book-board-back-print--pink {
+  width: 72%;
+  height: 55%;
+  left: -8%;
+  top: 18%;
+  background: var(--riso-pink-soft);
+}
+
+.book-board-back-print--blue {
+  width: 65%;
+  height: 50%;
+  right: -12%;
+  bottom: 8%;
+  background: var(--riso-blue-soft);
+}
+
+/* Same riso shadows as scroll cards */
+.stamp-fly-frame:has(.book-cover-field) {
+  --shadow-a: var(--riso-pink);
+  --shadow-b: var(--riso-blue);
+}
+
+.stamp-fly-field.book-cover-field {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+.book-cover-photo {
+  position: absolute;
+  inset: -1px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: contrast(1.07) saturate(0.82) brightness(1.03) sepia(0.14);
+}
+
+.book-cover-photo-soften {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(247, 243, 235, 0.22) 0%,
+    transparent 38%,
+    transparent 62%,
+    rgba(20, 20, 20, 0.12) 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.book-cover-riso {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 85% 70% at 18% 25%, rgba(232, 93, 117, 0.33), transparent 52%),
+    radial-gradient(ellipse 80% 65% at 88% 72%, rgba(110, 180, 214, 0.3), transparent 48%),
+    radial-gradient(ellipse 55% 45% at 50% 50%, rgba(232, 197, 71, 0.12), transparent 58%);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+
+.book-cover-field .stamp-fly-grain {
+  z-index: 2;
+  opacity: 0.11;
+}
+
+.external {
+  overflow: hidden;
+  height: 100dvh;
+  position: relative;
+  z-index: 1;
+}
+
+.horizontal-scroll-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8vh;
+  width: 100vh;
+  transform: rotate(-90deg) translate3d(0, -100vh, 0);
+  transform-origin: right top;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 44vh 0 14rem;
+  height: 100vw;
+  perspective: 1px;
+  transform-style: preserve-3d;
+}
+
+.img-wrapper {
+  --slot-v-scale: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: calc(52vh * max(1, var(--slot-v-scale)));
+  transform-origin: 50% 50%;
+  transform: rotate(90deg) translateZ(0.1px) scale(0.9) translateY(-3vh);
+  transition: transform 0.9s;
+}
+
+.slower {
+  transform: rotate(90deg) translateZ(-0.2px) scale(1.1) translateY(-10vh);
+}
+
+.slower-down {
+  transform: rotate(90deg) translateZ(-0.2px) scale(1.1) translateY(16vh);
+}
+
+.faster {
+  transform: rotate(90deg) translateZ(0.15px) scale(0.8) translateY(14vh);
+}
+
+.faster1 {
+  transform: rotate(90deg) translateZ(0.05px) scale(0.8) translateY(10vh);
+}
+
+.vertical {
+  transform: rotate(90deg) translateZ(-0.15px) scale(1.15);
+}
+
+/* Riso “registration” cards */
+.stamp-fly {
+  --tilt: 0deg;
+  --card-w-scale: 1;
+  --card-h-scale: 1;
+  width: min(calc(52vh * var(--card-w-scale)), calc(540px * var(--card-w-scale)));
+  transform: rotate(var(--tilt));
+  transform-origin: center center;
+  filter: drop-shadow(2px 4px 0 rgba(20, 20, 20, 0.08));
+}
+
+.stamp-fly.book-cover-stamp {
+  width: 100%;
+  max-width: none;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  transform: none;
+}
+
+.stamp-fly.book-cover-stamp .stamp-fly-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(12px, 2vmin, 20px);
+  box-shadow:
+    clamp(5px, 0.75vmin, 12px) clamp(5px, 0.75vmin, 12px) 0 var(--shadow-a),
+    clamp(10px, 1.4vmin, 22px) clamp(10px, 1.4vmin, 22px) 0 var(--shadow-b);
+}
+
+.stamp-fly-frame {
+  position: relative;
+  padding: clamp(14px, 2.5vw, 22px);
+  border-radius: 3px;
+  background: var(--paper-bright);
+  border: 3px solid var(--ink);
+  box-shadow:
+    5px 5px 0 var(--shadow-a),
+    10px 10px 0 var(--shadow-b);
+}
+
+.stamp-fly-field {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(28vh * var(--card-h-scale));
+  border-radius: 1px;
+  border: 2px solid var(--ink);
+}
+
+.stamp-fly-field--photo {
+  background: var(--ink);
+}
+
+.stamp-fly-field--photo .stamp-fly-grain {
+  z-index: 2;
+  opacity: 0.1;
+}
+
+.stamp-fly-photo {
+  position: absolute;
+  inset: -1px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: contrast(1.06) saturate(0.84) brightness(1.02) sepia(0.12);
+}
+
+.stamp-fly-photo-soften {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(247, 243, 235, 0.18) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(20, 20, 20, 0.1) 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.stamp-fly-photo-riso {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 80% 68% at 20% 28%, rgba(232, 93, 117, 0.28), transparent 52%),
+    radial-gradient(ellipse 75% 62% at 85% 70%, rgba(110, 180, 214, 0.26), transparent 48%);
+  mix-blend-mode: multiply;
+  opacity: 0.78;
+}
+
+.stamp-fly-field--photo .stamp-fly-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(transparent, rgba(247, 243, 235, 0.92));
+}
+
+.stamp-fly-field--cream {
+  background: linear-gradient(165deg, #fffefb 0%, #fff5f0 55%, #fde8e4 100%);
+}
+
+.stamp-fly-field--sage {
+  background: linear-gradient(165deg, #f8fefb 0%, #eaf6f2 55%, #dceee8 100%);
+}
+
+.stamp-fly-field--blush {
+  background: linear-gradient(165deg, #fffafd 0%, #fdeef4 55%, #fad6e4 100%);
+}
+
+.stamp-fly-field--linen {
+  background: linear-gradient(165deg, #fffef8 0%, #fdf6e4 55%, #f8e9c8 100%);
+}
+
+.stamp-fly-field--parchment {
+  background: linear-gradient(165deg, #fffdf8 0%, #fff0dc 55%, #ffe2c4 100%);
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--cream) {
+  --shadow-a: var(--riso-pink);
+  --shadow-b: var(--riso-blue);
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--sage) {
+  --shadow-a: var(--riso-blue);
+  --shadow-b: #5aaa8f;
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--blush) {
+  --shadow-a: #f06292;
+  --shadow-b: var(--riso-pink);
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--linen) {
+  --shadow-a: var(--riso-yellow);
+  --shadow-b: var(--riso-pink);
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--parchment) {
+  --shadow-a: var(--riso-blue);
+  --shadow-b: var(--riso-yellow);
+}
+
+.stamp-fly-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.stamp-fly-content {
+  position: relative;
+  z-index: 2;
+  padding: 1.65rem 1.45rem 1.55rem;
+  text-align: center;
+}
+
+.stamp-fly-content p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 2.35vw, 1.65rem);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.stamp-fly-field--cream .stamp-fly-content p,
+.stamp-fly-field--sage .stamp-fly-content p,
+.stamp-fly-field--blush .stamp-fly-content p,
+.stamp-fly-field--linen .stamp-fly-content p,
+.stamp-fly-field--parchment .stamp-fly-content p {
+  color: var(--ink);
+}
+
+@keyframes ticket-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.1rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ticket-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.ticket-reveal-backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(20, 20, 20, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.ticket-reveal-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-height: min(92dvh, 100%);
+  overflow-y: auto;
+  animation: ticket-reveal-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ticket-card {
+  width: min(388px, 92vw);
+  margin: 0;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #fcfaf6 0%, #f2ede4 100%);
+  border: 3px solid var(--ink);
+  border-radius: 2px;
+  padding: 1.2rem 1.35rem 1.35rem;
+  font-family: var(--font-body);
+  color: var(--ink);
+  box-shadow:
+    5px 5px 0 var(--riso-pink),
+    10px 10px 0 var(--riso-blue);
+}
+
+.ticket-card__head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.65rem;
+}
+
+.ticket-card__logo {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 35%, #fff 0%, #e8dfd6 55%, #c9a9a0 100%);
+  position: relative;
+}
+
+.ticket-card__logo-ring {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(20, 20, 20, 0.35);
+  border-radius: 50%;
+}
+
+.ticket-card__venues {
+  min-width: 0;
+}
+
+.ticket-card__venue-main {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ticket-card__venue-sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.3;
+  color: #3a3835;
+}
+
+.ticket-card__title {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4.2vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.ticket-card__subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2e2c2a;
+}
+
+.ticket-card__performer {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #45423e;
+}
+
+.ticket-card__row {
+  margin-top: 0.65rem;
+}
+
+.ticket-card__row--highlight time {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+}
+
+.ticket-card__date {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.ticket-card__time {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #b42334;
+}
+
+.ticket-card__seats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.ticket-card__seats-num {
+  font-weight: 700;
+}
+
+.ticket-card__price {
+  margin: 0.55rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.ticket-card__price-val {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.ticket-card__divider {
+  height: 2px;
+  margin: 0.75rem 0 0.65rem;
+  background: var(--ink);
+  opacity: 0.88;
+}
+
+.ticket-card__meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.ticket-card__meta-label {
+  font-weight: 700;
+}
+
+.ticket-card__meta--small {
+  font-size: 0.72rem;
+  color: #45423e;
+}
+
+.ticket-card__id-rule {
+  margin: 0.65rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ticket-card__codes {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed rgba(20, 20, 20, 0.35);
+}
+
+.ticket-barcode {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+}
+
+.ticket-barcode-bar {
+  display: block;
+  flex-shrink: 0;
+  align-self: stretch;
+  background: var(--ink);
+  border-radius: 0;
+}
+
+.ticket-qr {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+
+.ticket-qr-cell {
+  border-radius: 0;
+  background: #e8e4de;
+}
+
+.ticket-qr-cell--on {
+  background: var(--ink);
+}
+
+.ticket-card__sponsors {
+  margin: 0.75rem 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #1a5080;
+}
+
+.ticket-card__sber {
+  color: #21a038;
+}
+
+.ticket-reveal-close {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.55rem 1.35rem;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--paper-bright);
+  border: 3px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 4px 4px 0 var(--riso-pink);
+}
+
+.ticket-reveal-close:hover {
+  filter: brightness(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+
+  .book-board {
+    transform: rotateY(calc(var(--book-open, 0) * -178deg));
+  }
+
+  .ticket-reveal-panel {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .book-cover-stage {
+    padding: clamp(8px, 2vw, 14px);
+  }
+
+  .img-wrapper {
+    min-height: 56vh;
+  }
+
+  .horizontal-scroll-wrapper {
+    gap: 10vh;
+  }
+
+  .stamp-fly {
+    width: min(calc(60vh * var(--card-w-scale)), calc(84vw * var(--card-w-scale)));
+  }
+
+  .img-wrapper {
+    min-height: calc(56vh * max(1, var(--slot-v-scale)));
+  }
+
+  .stamp-fly-frame {
+    box-shadow:
+      4px 4px 0 var(--shadow-a),
+      8px 8px 0 var(--shadow-b);
+  }
+
+  .stamp-fly-content {
+    padding: 1.35rem 1rem 1.2rem;
+  }
+
+  .stamp-fly-field {
+    min-height: 30vh;
+  }
+}

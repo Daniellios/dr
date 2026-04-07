@@ -1,0 +1,21 @@
+export const bolshoiTicket = {
+  venueShort: "Большой театр России",
+  historicalStage: "Историческая сцена",
+  entrance: "Центральный вход",
+  title: "Лебедь (6+)",
+  subtitle: "Акробатическая драма",
+  performer: "Guangzhou Acrobatic Arts Theatre",
+  dateLine: "25 апреля 2026 г.",
+  time: "19:00",
+  seatSection: "Амфитеатр, правая сторона",
+  row: "3",
+  seat: "3",
+  priceRub: "10 800",
+  visitorLabel: "Посетитель",
+  visitorName: "Кудиевская Алёна Игоревна",
+  ticketType: "Электронный персональный билет",
+  ticketNumber: "#6068418",
+  orderNumber: "Заказ №2282443",
+  paymentHint: 'Оплачено картой «Мир»',
+  idNote: "Действителен при предъявлении документа, удостоверяющего личность"
+};
