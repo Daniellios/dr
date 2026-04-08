@@ -33,7 +33,7 @@ const SCROLL_END_PX = 24;
 const GIFT_STEPS = 4;
 const GIFT_OPEN_MS = 820;
 const GIFT_CLICKS_TO_OPEN = 50;
-const TICKET_FLYOUT_MS = 1200;
+const TICKET_FLYOUT_MS = 1700;
 const GIFT_PULSE_UNTIL_CLICKS = 20;
 const FLOAT_EMOJIS = [
   { symbol: "❤️", x: "8%", y: "14%", delay: "0s", dur: "9.5s", size: "1.35rem" },
@@ -350,7 +350,7 @@ export default function App() {
                           style={{ backgroundImage: `url(${bookCoverImage})` }}
                         />
                         <div className="book-cover-title-wrap" aria-hidden="true">
-                          <p className="book-cover-title">Happy Birthday Album</p>
+                          <p className="book-cover-title">Happy 24th Birthday Album</p>
                         </div>
                         <div className="book-cover-photo-soften" aria-hidden="true" />
                         <div className="book-cover-riso" aria-hidden="true" />
@@ -440,8 +440,7 @@ export default function App() {
                   >
                     <div className="ticket-card ticket-card--flyout">
                       <div className="ticket-card__divider" />
-                      <p className="ticket-card__title">Билет</p>
-                      <p className="ticket-card__subtitle">Большой театр</p>
+                      <p className="ticket-card__title">Какой-то билет? 🤨🧐🤯</p>
                     </div>
                   </div>
                 ) : null}
