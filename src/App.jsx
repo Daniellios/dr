@@ -304,13 +304,13 @@ export default function App() {
   const giftHintText = giftUnwrapped
     ? "Открыто"
     : giftClicks >= 40
-      ? "Та-да...!"
+      ? "Та-да...!🎉"
       : giftClicks >= 30
-        ? "Вот-вот появится!"
+        ? "Вот-вот появится!🤩"
         : giftClicks >= 20
-          ? "Еще совсем чуть-чуть!"
+          ? "Еще совсем чуть-чуть!🤨"
           : giftClicks >= 10
-            ? "Там что-то есть!"
+            ? "Там что-то есть!🧐"
             : "Кликай, чтобы открыть";
 
   return (
@@ -350,7 +350,9 @@ export default function App() {
                           style={{ backgroundImage: `url(${bookCoverImage})` }}
                         />
                         <div className="book-cover-title-wrap" aria-hidden="true">
-                          <p className="book-cover-title">Happy 24th Birthday Album</p>
+                          <p className="book-cover-title">
+                            {"Alena's \n 24th Happy Birthday Album"}
+                          </p>
                         </div>
                         <div className="book-cover-photo-soften" aria-hidden="true" />
                         <div className="book-cover-riso" aria-hidden="true" />

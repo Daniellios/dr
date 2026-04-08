@@ -38,6 +38,7 @@ body,
 }
 
 @keyframes riso-drift {
+
   0%,
   100% {
     background-position:
@@ -46,6 +47,7 @@ body,
       50% 88%,
       78% 72%;
   }
+
   50% {
     background-position:
       22% 28%,
@@ -90,11 +92,9 @@ body::after {
   pointer-events: none;
   z-index: 0;
   opacity: 0.5;
-  background: radial-gradient(
-    ellipse 92% 88% at 50% 48%,
-    transparent 52%,
-    rgba(212, 200, 182, 0.45) 100%
-  );
+  background: radial-gradient(ellipse 92% 88% at 50% 48%,
+      transparent 52%,
+      rgba(212, 200, 182, 0.45) 100%);
   mix-blend-mode: multiply;
 }
 
@@ -133,11 +133,13 @@ body::after {
 }
 
 @keyframes emoji-flyby {
+
   0%,
   100% {
     transform: translate3d(-3px, 0, 0) rotate(-4deg) scale(0.96);
     opacity: 0.4;
   }
+
   50% {
     transform: translate3d(3px, -18px, 0) rotate(4deg) scale(1.06);
     opacity: 0.72;
@@ -164,10 +166,8 @@ body::after {
   pointer-events: none;
   overflow: visible;
   background: transparent;
-  backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0))))
-    saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
-  -webkit-backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0))))
-    saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
+  backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0)))) saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
+  -webkit-backdrop-filter: blur(calc(14px * max(0, 1 - var(--book-open, 0)))) saturate(calc(1.03 + 0.02 * max(0, 1 - var(--book-open, 0))));
   transition: opacity 560ms ease;
 }
 
@@ -360,6 +360,7 @@ body::after {
   text-transform: uppercase;
   text-align: center;
   color: var(--ink);
+  white-space: pre-line;
 }
 
 .book-cover-photo-soften {
@@ -367,13 +368,11 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(247, 243, 235, 0.22) 0%,
-    transparent 38%,
-    transparent 62%,
-    rgba(20, 20, 20, 0.12) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(247, 243, 235, 0.22) 0%,
+      transparent 38%,
+      transparent 62%,
+      rgba(20, 20, 20, 0.12) 100%);
   mix-blend-mode: soft-light;
 }
 
@@ -436,31 +435,36 @@ body::after {
   0% {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
+
   20% {
-    transform: translate3d(calc(-1px * var(--gift-step, 1)), calc(1px * var(--gift-step, 1)), 0)
-      rotate(calc(-0.25deg * var(--gift-step, 1)));
+    transform: translate3d(calc(-1px * var(--gift-step, 1)), calc(1px * var(--gift-step, 1)), 0) rotate(calc(-0.25deg * var(--gift-step, 1)));
   }
+
   40% {
-    transform: translate3d(calc(1px * var(--gift-step, 1)), calc(-1px * var(--gift-step, 1)), 0)
-      rotate(calc(0.35deg * var(--gift-step, 1)));
+    transform: translate3d(calc(1px * var(--gift-step, 1)), calc(-1px * var(--gift-step, 1)), 0) rotate(calc(0.35deg * var(--gift-step, 1)));
   }
+
   60% {
     transform: translate3d(calc(-1px * var(--gift-step, 1)), 0, 0) rotate(calc(0.2deg * var(--gift-step, 1)));
   }
+
   80% {
     transform: translate3d(calc(1px * var(--gift-step, 1)), 0, 0) rotate(calc(-0.2deg * var(--gift-step, 1)));
   }
+
   100% {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
 }
 
 @keyframes gift-pulse {
+
   0%,
   100% {
     transform: translate3d(0, 0, 0) scale(1);
     filter: drop-shadow(0 0 0 rgba(232, 93, 117, 0));
   }
+
   50% {
     transform: translate3d(0, 0, 0) scale(1.03);
     filter: drop-shadow(0 0 16px rgba(232, 93, 117, 0.36));
@@ -573,21 +577,26 @@ body::after {
     opacity: 0;
     transform: translate3d(-50%, 70%, 0) rotate(-10deg) scale(0.88);
   }
+
   14% {
     opacity: 1;
   }
+
   48% {
     opacity: 1;
     transform: translate3d(-50%, -98%, 0) rotate(4deg) scale(0.995);
   }
+
   72% {
     opacity: 1;
     transform: translate3d(-50%, -130%, 0) rotate(6deg) scale(1.02);
   }
+
   88% {
     opacity: 1;
     transform: translate3d(-50%, -126%, 0) rotate(6deg) scale(1.02);
   }
+
   100% {
     opacity: 1;
     transform: translate3d(-50%, -126%, 0) rotate(6deg) scale(1.02);
@@ -650,9 +659,11 @@ body::after {
   0% {
     transform: translateY(0) rotate(0deg);
   }
+
   55% {
     transform: translateY(-4.5%) rotate(-16deg);
   }
+
   100% {
     transform: translateY(-16%) rotate(-44deg);
   }
@@ -773,13 +784,11 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(247, 243, 235, 0.18) 0%,
-    transparent 40%,
-    transparent 60%,
-    rgba(20, 20, 20, 0.1) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(247, 243, 235, 0.18) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(20, 20, 20, 0.1) 100%);
   mix-blend-mode: soft-light;
 }
 
@@ -938,11 +947,13 @@ body::after {
 }
 
 @keyframes heart-road-pulse {
+
   0%,
   100% {
     transform: rotate(-0.4deg) scale(0.995);
     opacity: 0.9;
   }
+
   50% {
     transform: rotate(0.4deg) scale(1.01);
     opacity: 0.98;
@@ -954,6 +965,7 @@ body::after {
     opacity: 0;
     transform: translateY(1.1rem) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
