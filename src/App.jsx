@@ -146,7 +146,7 @@ export default function App() {
         kind: "text",
         text,
         className: ["faster", "slower vertical", "slower slower-down"][i],
-        variant: ["sage", "blush", "linen", "lavender", "sky"][i % 5],
+        variant: ["sage", "blush", "linen", "lavender", "sky", "moldova"][i % 6],
         tiltDeg: [1.6, -1.4, 2.4][i],
         scale: TEXT_SCALES[i + 1]
       })),
@@ -183,7 +183,7 @@ export default function App() {
         imageBg: undefined,
         imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
         className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
-        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky"][slot % 6],
+        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky", "moldova"][slot % 7],
         tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
         scale: image === photo5 ? { w: 1.02, h: 1.82 } : PHOTO_SCALES[slot % PHOTO_SCALES.length]
       });
@@ -210,7 +210,7 @@ export default function App() {
         imageBg: undefined,
         imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
         className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
-        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky"][slot % 6],
+        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky", "moldova"][slot % 7],
         tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
         scale: image === photo5 ? { w: 1.02, h: 1.82 } : PHOTO_SCALES[slot % PHOTO_SCALES.length]
       });

@@ -842,6 +842,10 @@ body::after {
   background: linear-gradient(165deg, #f6fdff 0%, #e5f5ff 55%, #d1edff 100%);
 }
 
+.stamp-fly-field--moldova {
+  background: linear-gradient(165deg, #fffefb 0%, #fff5f0 55%, #fde8e4 100%);
+}
+
 .stamp-fly-frame:has(.stamp-fly-field--cream) {
   --shadow-a: var(--riso-pink);
   --shadow-b: var(--riso-blue);
@@ -875,6 +879,15 @@ body::after {
 .stamp-fly-frame:has(.stamp-fly-field--sky) {
   --shadow-a: var(--riso-blue);
   --shadow-b: #1a5080;
+}
+
+.stamp-fly-frame:has(.stamp-fly-field--moldova) {
+  --shadow-a: #1f56b5;
+  --shadow-b: #f2c230;
+  box-shadow:
+    5px 5px 0 #1f56b5,
+    10px 10px 0 #f2c230,
+    15px 15px 0 #c4312e;
 }
 
 .stamp-fly-grain {
@@ -921,6 +934,10 @@ body::after {
 .stamp-fly-field--parchment .stamp-fly-content p,
 .stamp-fly-field--lavender .stamp-fly-content p,
 .stamp-fly-field--sky .stamp-fly-content p {
+  color: var(--ink);
+}
+
+.stamp-fly-field--moldova .stamp-fly-content p {
   color: var(--ink);
 }
 
