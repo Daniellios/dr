@@ -1,7 +1,8 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { birthdayMessageRu } from "./data/message";
 import { getAlbumPhotoUrls } from "./data/albumPhotos";
 import bookCoverImage from "../assets/4065863.jpg";
+import giftBoxImage from "../assets/gift-box.png";
 import StampFlyCard from "./components/StampFlyCard";
 import BolshoiTicketReveal from "./components/BolshoiTicketReveal";
 
@@ -21,26 +22,97 @@ const PHOTO_SCALES = [
 ];
 
 const SCROLL_END_PX = 24;
+const GIFT_STEPS = 4;
+const GIFT_OPEN_MS = 820;
+const GIFT_CLICKS_TO_OPEN = 50;
+const TICKET_FLYOUT_MS = 1200;
+const FLOAT_EMOJIS = [
+  { symbol: "❤️", x: "8%", y: "14%", delay: "0s", dur: "9.5s", size: "1.35rem" },
+  { symbol: "🎂", x: "86%", y: "18%", delay: "1.2s", dur: "10.2s", size: "1.45rem" },
+  { symbol: "🥳", x: "16%", y: "78%", delay: "2.1s", dur: "8.8s", size: "1.4rem" },
+  { symbol: "🎁", x: "82%", y: "76%", delay: "0.8s", dur: "10.8s", size: "1.5rem" },
+  { symbol: "💐", x: "48%", y: "10%", delay: "1.8s", dur: "11.2s", size: "1.45rem" },
+  { symbol: "✨", x: "50%", y: "86%", delay: "0.3s", dur: "8.2s", size: "1.2rem" },
+  { symbol: "✨", x: "28%", y: "28%", delay: "2.6s", dur: "9.1s", size: "1.1rem" },
+  { symbol: "❤️", x: "72%", y: "42%", delay: "1.5s", dur: "10.5s", size: "1.25rem" }
+];
+const HEART_ROAD_COUNT = 3;
 
 export default function App() {
   const [scrollTop, setScrollTop] = useState(0);
   const [scrollAtEnd, setScrollAtEnd] = useState(false);
   const [ticketDismissed, setTicketDismissed] = useState(false);
+  const [ticketReady, setTicketReady] = useState(false);
+  const [ticketFlyout, setTicketFlyout] = useState(false);
+  const [giftClicks, setGiftClicks] = useState(0);
+  const [giftStep, setGiftStep] = useState(0);
+  const [giftUnwrapped, setGiftUnwrapped] = useState(false);
+  const [giftOpening, setGiftOpening] = useState(false);
 
   const albumScrollRef = useRef(null);
+  const giftClicksRef = useRef(giftClicks);
+  const giftUnwrappedRef = useRef(giftUnwrapped);
+  const giftOpeningRef = useRef(giftOpening);
+  const ticketReadyRef = useRef(ticketReady);
+  const ticketFlyoutRef = useRef(ticketFlyout);
+
+  useEffect(() => {
+    giftClicksRef.current = giftClicks;
+    giftUnwrappedRef.current = giftUnwrapped;
+    giftOpeningRef.current = giftOpening;
+    ticketReadyRef.current = ticketReady;
+    ticketFlyoutRef.current = ticketFlyout;
+  }, [giftClicks, giftOpening, giftUnwrapped, ticketFlyout, ticketReady]);
 
   const updateAlbumScrollState = useCallback((el) => {
     setScrollTop(el.scrollTop);
     const gap = el.scrollHeight - el.scrollTop - el.clientHeight;
     const nearEnd = gap <= SCROLL_END_PX;
     setScrollAtEnd(nearEnd);
-    if (!nearEnd) setTicketDismissed(false);
+    // Reset only when user returns to the very start AND hasn't started opening the gift.
+    // Otherwise tiny scroll snaps can accidentally wipe the "reward" state.
+    if (el.scrollTop <= 8) {
+      const hasStartedGift =
+        giftClicksRef.current > 0 ||
+        giftOpeningRef.current ||
+        giftUnwrappedRef.current ||
+        ticketFlyoutRef.current ||
+        ticketReadyRef.current;
+
+      if (!hasStartedGift) {
+        setTicketDismissed(false);
+        setTicketReady(false);
+        setTicketFlyout(false);
+        setGiftClicks(0);
+        setGiftStep(0);
+        setGiftUnwrapped(false);
+        setGiftOpening(false);
+      }
+    }
   }, []);
 
   const onAlbumScroll = useCallback(
     (e) => updateAlbumScrollState(e.currentTarget),
     [updateAlbumScrollState]
   );
+
+  const resetToAlbumStart = useCallback(() => {
+    const el = albumScrollRef.current;
+    if (el) {
+      el.scrollTop = 0;
+      updateAlbumScrollState(el);
+    } else {
+      setScrollTop(0);
+      setScrollAtEnd(false);
+    }
+    setTicketDismissed(false);
+    setTicketReady(false);
+    setTicketFlyout(false);
+    setGiftClicks(0);
+    setGiftStep(0);
+    setGiftUnwrapped(false);
+    setGiftOpening(false);
+  }, [updateAlbumScrollState]);
 
   const cards = useMemo(() => {
     const photos = getAlbumPhotoUrls();
@@ -52,7 +124,7 @@ export default function App() {
         key: "headline",
         kind: "text",
         text: headline,
-        className: "slower",
+        className: "slower headline-slot",
         variant: "cream",
         tiltDeg: -2.2,
         scale: TEXT_SCALES[0]
@@ -62,14 +134,14 @@ export default function App() {
         kind: "text",
         text,
         className: ["faster", "slower vertical", "slower slower-down"][i],
-        variant: ["sage", "blush", "linen"][i],
+        variant: ["sage", "blush", "linen", "lavender", "sky"][i % 5],
         tiltDeg: [1.6, -1.4, 2.4][i],
         scale: TEXT_SCALES[i + 1]
       })),
       {
         key: "sign",
         kind: "text",
-        text: `С любовью, ${signature}`,
+        text: `${signature}`,
         className: "faster1",
         variant: "parchment",
         tiltDeg: -1.8,
@@ -81,22 +153,37 @@ export default function App() {
     for (let i = 0; i < blocks.length; i += 1) {
       const b = blocks[i];
       out.push(b);
-      const isBeforeSignature = i < blocks.length - 1;
-      const image = isBeforeSignature ? photos[photoSlot] : undefined;
-      if (image) {
-        const slot = photoSlot;
-        photoSlot += 1;
-        out.push({
-          key: `photo-${slot}`,
-          kind: "photo",
-          image,
-          imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
-          className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
-          variant: ["sage", "blush", "linen", "parchment"][slot % 4],
-          tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
-          scale: PHOTO_SCALES[slot % PHOTO_SCALES.length]
-        });
-      }
+
+      // Keep headline standalone; alternate only after it:
+      // headline, then wish card -> photo card -> wish card -> photo card...
+      if (i === 0) continue;
+
+      const image = photos[photoSlot];
+      if (!image) continue;
+
+      const slot = photoSlot;
+      photoSlot += 1;
+      out.push({
+        key: `photo-${slot}`,
+        kind: "photo",
+        image,
+        imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
+        className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
+        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky"][slot % 6],
+        tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
+        scale: PHOTO_SCALES[slot % PHOTO_SCALES.length]
+      });
+    }
+
+    for (let i = 0; i < HEART_ROAD_COUNT; i += 1) {
+      out.push({
+        key: `heart-road-${i}`,
+        kind: "hearts",
+        className: i % 2 === 0 ? "faster1 heart-road-slot" : "faster heart-road-slot",
+        variant: ["blush", "lavender", "parchment", "sky"][i % 4],
+        tiltDeg: [-0.8, 0.9, -0.6, 0.7][i % 4],
+        scale: { w: 1.06, h: 0.92 }
+      });
     }
 
     return out;
@@ -114,10 +201,66 @@ export default function App() {
 
   const openProgress = Math.min(scrollTop / 220, 1);
   const introHidden = openProgress > 0.94;
-  const ticketVisible = introHidden && scrollAtEnd && !ticketDismissed;
+
+  useEffect(() => {
+    if (giftUnwrapped) return undefined;
+    if (giftClicks < GIFT_CLICKS_TO_OPEN) return undefined;
+
+    setGiftOpening(true);
+    const t = setTimeout(() => {
+      setGiftUnwrapped(true);
+      setGiftOpening(false);
+      setTicketDismissed(false);
+    }, GIFT_OPEN_MS);
+    return () => clearTimeout(t);
+  }, [giftClicks, giftUnwrapped]);
+
+  useEffect(() => {
+    if (!giftUnwrapped) {
+      setTicketReady(false);
+      setTicketFlyout(false);
+      return undefined;
+    }
+    setTicketFlyout(true);
+    const t = setTimeout(() => {
+      setTicketReady(true);
+      setTicketFlyout(false);
+    }, TICKET_FLYOUT_MS);
+    return () => clearTimeout(t);
+  }, [giftUnwrapped]);
+
+  const onGiftClick = useCallback(() => {
+    if (giftUnwrapped || giftOpening) return;
+
+    setGiftClicks((prev) => {
+      const next = Math.min(GIFT_CLICKS_TO_OPEN, prev + 1);
+      const progress = next / GIFT_CLICKS_TO_OPEN;
+      setGiftStep(Math.min(GIFT_STEPS, Math.floor(progress * (GIFT_STEPS + 0.0001))));
+      return next;
+    });
+  }, [giftOpening, giftUnwrapped]);
+  const ticketVisible = giftUnwrapped && ticketReady && !ticketDismissed;
+  const giftClicksLeft = Math.max(0, GIFT_CLICKS_TO_OPEN - giftClicks);
 
   return (
     <main className="album-page">
+      <div className="ambient-emojis" aria-hidden="true">
+        {FLOAT_EMOJIS.map((e, i) => (
+          <span
+            key={`${e.symbol}-${i}`}
+            className="ambient-emoji"
+            style={{
+              "--emoji-x": e.x,
+              "--emoji-y": e.y,
+              "--emoji-delay": e.delay,
+              "--emoji-duration": e.dur,
+              "--emoji-size": e.size
+            }}
+          >
+            {e.symbol}
+          </span>
+        ))}
+      </div>
       <div
         className={`book-intro${introHidden ? " is-hidden" : ""}`}
         style={{ "--book-open": openProgress }}
@@ -166,7 +309,8 @@ export default function App() {
               key={card.key}
               className={`img-wrapper ${card.className}`}
               style={{
-                "--slot-v-scale": Math.max(card.scale.w, card.scale.h)
+                "--slot-v-scale": Math.max(card.scale.w, card.scale.h),
+                "--gift-step": 0
               }}
             >
               <StampFlyCard
@@ -178,13 +322,70 @@ export default function App() {
                 scaleH={card.scale.h}
               >
                 {card.kind === "text" ? <p>{card.text}</p> : null}
+                {card.kind === "hearts" ? (
+                  <div className="heart-road" aria-hidden="true">
+                    <span className="heart-road-line">❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️</span>
+                    <span className="heart-road-line">❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️</span>
+                    <span className="heart-road-line">❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️</span>
+                  </div>
+                ) : null}
               </StampFlyCard>
             </div>
           ))}
+
+          <div
+            className="img-wrapper slower gift-slot"
+            style={{
+              "--slot-v-scale": 1.35,
+              "--gift-step": giftStep,
+              "--slot-ty": "-1vh"
+            }}
+          >
+            <div
+              className={`gift-wrapper${introHidden && scrollAtEnd ? " gift-wrapper--active" : ""}${introHidden && scrollAtEnd && giftStep > 0 && !giftOpening && !giftUnwrapped ? " gift-wrapper--rumble" : ""
+                }${giftOpening ? " gift-wrapper--opening" : ""}${giftUnwrapped ? " gift-wrapper--open" : ""}`}
+              aria-label="Подарок"
+              role="button"
+              tabIndex={0}
+              onClick={onGiftClick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") onGiftClick();
+              }}
+            >
+              <div className="gift-stage">
+                <div className="gift-base" style={{ backgroundImage: `url(${giftBoxImage})` }} />
+                <div className="gift-lid" style={{ backgroundImage: `url(${giftBoxImage})` }} />
+                <div className="gift-glow" aria-hidden="true" />
+                {ticketFlyout || (giftUnwrapped && !ticketReady) ? (
+                  <div
+                    className={`gift-ticket-flyout${ticketFlyout ? " gift-ticket-flyout--anim" : ""}`}
+                    aria-hidden="true"
+                  >
+                    <div className="ticket-card ticket-card--flyout">
+                      <div className="ticket-card__divider" />
+                      <p className="ticket-card__title">Билет</p>
+                      <p className="ticket-card__subtitle">Большой театр</p>
+                    </div>
+                  </div>
+                ) : null}
+                <div className="gift-hint" aria-hidden="true">
+                  {giftUnwrapped
+                    ? "Открыто"
+                    : giftClicks > 0
+                      ? `Ещё ${giftClicksLeft}…`
+                      : "Кликай, чтобы открыть"}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <BolshoiTicketReveal open={ticketVisible} onDismiss={() => setTicketDismissed(true)} />
+      <BolshoiTicketReveal
+        open={ticketVisible}
+        onDismiss={() => setTicketDismissed(true)}
+        onRestart={resetToAlbumStart}
+      />
     </main>
   );
 }

@@ -9,7 +9,13 @@ const modules = import.meta.glob("../../assets/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG
 
 export function getAlbumPhotoUrls() {
   return Object.entries(modules)
-    .filter(([path]) => !path.replace(/\\/g, "/").endsWith(COVER_FILENAME))
+    .filter(([path]) => {
+      const normalized = path.replace(/\\/g, "/");
+      if (normalized.endsWith(COVER_FILENAME)) return false;
+      const filename = normalized.split("/").pop() || "";
+      // Only use assets explicitly named like `photo-1.jpg`, `photo-02.png`, etc.
+      return /^photo-\d+\.(jpg|jpeg|png|webp)$/i.test(filename);
+    })
     .sort(([a], [b]) => a.localeCompare(b, undefined, { sensitivity: "base" }))
     .map(([, url]) => url);
 }

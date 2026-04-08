@@ -1,4 +1,5 @@
 export default function StampFlyCard({
+  className = "",
   variant = "cream",
   tiltDeg = 0,
   image = null,
@@ -12,7 +13,7 @@ export default function StampFlyCard({
 
   return (
     <article
-      className="stamp-fly"
+      className={`stamp-fly${className ? ` ${className}` : ""}`}
       style={{ "--tilt": `${tiltDeg}deg`, "--card-w-scale": w, "--card-h-scale": h }}
     >
       <div className="stamp-fly-frame">

@@ -24,7 +24,7 @@ function FakeQr() {
   );
 }
 
-export default function BolshoiTicketReveal({ open, onDismiss }) {
+export default function BolshoiTicketReveal({ open, onDismiss, onRestart }) {
   if (!open) return null;
 
   return (
@@ -45,7 +45,7 @@ export default function BolshoiTicketReveal({ open, onDismiss }) {
           </header>
 
           <h2 id="ticket-title" className="ticket-card__title">
-            {t.title}
+            {t.title.replace('(6+)', '')}
           </h2>
           <p className="ticket-card__subtitle">{t.subtitle}</p>
           <p className="ticket-card__performer">{t.performer}</p>
@@ -60,7 +60,7 @@ export default function BolshoiTicketReveal({ open, onDismiss }) {
           <div className="ticket-card__divider" />
 
           <p className="ticket-card__meta">
-            <span className="ticket-card__meta-label">{t.visitorLabel}:</span> {t.visitorName}
+            <span className="ticket-card__meta-label">{t.visitorLabel}:</span> {t.visitorName} ❤️
           </p>
           <p className="ticket-card__meta">
             {t.ticketType} {t.ticketNumber}
@@ -73,8 +73,8 @@ export default function BolshoiTicketReveal({ open, onDismiss }) {
           </div>
         </article>
 
-        <button type="button" className="ticket-reveal-close" onClick={onDismiss}>
-          Иду!
+        <button type="button" className="ticket-reveal-close" onClick={onRestart}>
+          Иду! 🎉
         </button>
       </div>
     </div>
