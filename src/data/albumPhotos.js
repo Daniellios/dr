@@ -1,6 +1,6 @@
 /** JPEG / PNG / WebP in project `assets/` (same folder as book cover). Cover file is excluded. */
 
-const COVER_FILENAME = "4065863.jpg";
+const COVER_FILENAME = "book-cover.jpg";
 
 const modules = import.meta.glob("../../assets/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}", {
   eager: true,

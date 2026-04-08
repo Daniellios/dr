@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { birthdayMessageRu } from "./data/message";
 import { getAlbumPhotoUrls } from "./data/albumPhotos";
-import bookCoverImage from "../assets/4065863.jpg";
+import bookCoverImage from "../assets/book-cover.jpg";
 import giftBoxImage from "../assets/gift-box.png";
 import StampFlyCard from "./components/StampFlyCard";
 import BolshoiTicketReveal from "./components/BolshoiTicketReveal";
@@ -15,10 +15,10 @@ const TEXT_SCALES = [
 ];
 
 const PHOTO_SCALES = [
-  { w: 1.32, h: 1.46 },
-  { w: 1.24, h: 1.38 },
-  { w: 1.41, h: 1.33 },
-  { w: 1.28, h: 1.52 }
+  { w: 1.06, h: 1.5 },
+  { w: 1.02, h: 1.44 },
+  { w: 1.1, h: 1.42 },
+  { w: 1.04, h: 1.56 }
 ];
 
 const SCROLL_END_PX = 24;
@@ -278,6 +278,9 @@ export default function App() {
                           className="book-cover-photo"
                           style={{ backgroundImage: `url(${bookCoverImage})` }}
                         />
+                        <div className="book-cover-title-wrap" aria-hidden="true">
+                          <p className="book-cover-title">Happy Birthday Album</p>
+                        </div>
                         <div className="book-cover-photo-soften" aria-hidden="true" />
                         <div className="book-cover-riso" aria-hidden="true" />
                         <div className="stamp-fly-grain" aria-hidden="true" />

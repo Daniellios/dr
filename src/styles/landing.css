@@ -196,7 +196,10 @@ body::after {
   height: 100%;
   min-width: 0;
   width: 100%;
-  padding: clamp(10px, 2.2vmin, 22px);
+  padding-top: clamp(10px, 2.2vmin, 22px);
+  padding-left: clamp(10px, 2.2vmin, 22px);
+  padding-right: clamp(14px, 2.8vmin, 28px);
+  padding-bottom: clamp(14px, 2.8vmin, 28px);
   display: flex;
   flex-direction: column;
   overflow: visible;
@@ -327,6 +330,35 @@ body::after {
   background-position: center;
   background-repeat: no-repeat;
   filter: contrast(1.07) saturate(0.82) brightness(1.03) sepia(0.14);
+}
+
+.book-cover-title-wrap {
+  position: absolute;
+  left: clamp(10px, 2.2vmin, 18px);
+  right: clamp(10px, 2.2vmin, 18px);
+  top: clamp(12px, 2.8vmin, 26px);
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+}
+
+.book-cover-title {
+  margin: 0;
+  padding: clamp(0.4rem, 1.2vmin, 0.62rem) clamp(0.72rem, 2.25vmin, 1.15rem);
+  border: 2px solid var(--ink);
+  background: rgba(247, 243, 235, 0.86);
+  box-shadow:
+    2px 2px 0 var(--riso-pink),
+    4px 4px 0 var(--riso-blue);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.08rem, 2.45vmin, 1.6rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
 }
 
 .book-cover-photo-soften {
@@ -1188,6 +1220,33 @@ body::after {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --mobile-card-edge-pad: clamp(10px, 4vw, 18px);
+  }
+
+  .external {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .horizontal-scroll-wrapper {
+    width: 100%;
+    height: 100dvh;
+    transform: none;
+    transform-origin: center center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding: 22vh var(--mobile-card-edge-pad) 10rem;
+  }
+
+  .img-wrapper {
+    width: 100%;
+    transform: translateZ(0) scale(0.96) translateY(var(--slot-ty)) translateX(var(--slot-tx));
+  }
+
   .book-cover-stage {
     padding: clamp(4px, 1.2vw, 10px);
   }
@@ -1205,20 +1264,53 @@ body::after {
     background-position: center top;
   }
 
+  .book-cover-title {
+    font-size: clamp(0.98rem, 3.9vw, 1.32rem);
+    padding: 0.38rem 0.62rem;
+  }
+
   .img-wrapper {
     min-height: 56vh;
   }
 
   .horizontal-scroll-wrapper {
-    gap: 10vh;
+    gap: 3.8vh;
   }
 
   .stamp-fly {
-    width: min(calc(60vh * var(--card-w-scale)), calc(84vw * var(--card-w-scale)));
+    width: min(calc(56vh * var(--card-w-scale)), 100%);
   }
 
   .img-wrapper {
     min-height: calc(56vh * max(1, var(--slot-v-scale)));
+  }
+
+  .slower {
+    transform: translateZ(0) scale(1.06) translateY(-7vh);
+  }
+
+  .slower-down {
+    transform: translateZ(0) scale(1.06) translateY(10vh);
+  }
+
+  .faster {
+    transform: translateZ(0) scale(0.9) translateY(9vh);
+  }
+
+  .faster1 {
+    transform: translateZ(0) scale(0.9) translateY(7vh);
+  }
+
+  .vertical {
+    transform: translateZ(0) scale(1.08);
+  }
+
+  .headline-slot {
+    min-height: calc(72vh * max(1, var(--slot-v-scale)));
+  }
+
+  .headline-slot.slower {
+    transform: translateZ(0) scale(1.03) translateY(3vh);
   }
 
   .stamp-fly-frame {
@@ -1235,18 +1327,27 @@ body::after {
     min-height: 30vh;
   }
 
+  .stamp-fly-field--photo {
+    min-height: 41vh;
+  }
+
+  .stamp-fly-photo {
+    background-size: cover;
+    background-position: center center;
+  }
+
   .gift-wrapper {
     width: min(72vh, 92vw);
   }
 
   .gift-slot {
     min-height: 58vh;
-    transform: rotate(90deg) translateZ(0.1px) scale(0.9) translateY(0) translateX(0);
+    transform: translateZ(0) scale(0.96) translateY(0) translateX(0);
   }
 }
 
 @media (max-width: 460px) {
   .gift-slot {
-    transform: rotate(90deg) translateZ(0.1px) scale(0.9) translateY(0) translateX(12vw);
+    transform: translateZ(0) scale(0.96) translateY(0) translateX(0);
   }
 }
