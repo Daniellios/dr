@@ -461,6 +461,18 @@ body::after {
   display: grid;
   place-items: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  outline: none;
+}
+
+.gift-wrapper:focus {
+  outline: none;
+}
+
+.gift-wrapper:focus-visible {
+  outline: 3px solid rgba(110, 180, 214, 0.85);
+  outline-offset: 4px;
 }
 
 .gift-stage {
@@ -1240,6 +1252,7 @@ body::after {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
     padding: 22vh var(--mobile-card-edge-pad) 10rem;
+    scroll-snap-type: y proximity;
   }
 
   .img-wrapper {
@@ -1341,8 +1354,11 @@ body::after {
   }
 
   .gift-slot {
-    min-height: 58vh;
+    min-height: 100dvh;
     transform: translateZ(0) scale(0.96) translateY(0) translateX(0);
+    --slot-ty: 0vh;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 }
 
