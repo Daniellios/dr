@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { birthdayMessageRu } from "./data/message";
-import { getAlbumPhotoUrls } from "./data/albumPhotos";
+import { getAlbumPhotoUrlByStem, getAlbumPhotoUrls } from "./data/albumPhotos";
 import bookCoverImage from "../assets/book-cover.jpg";
 import giftBoxImage from "../assets/gift-box.png";
 import StampFlyCard from "./components/StampFlyCard";
@@ -11,11 +11,19 @@ const TEXT_SCALES = [
   { w: 1.14, h: 1.07 },
   { w: 1.06, h: 1.19 },
   { w: 1.18, h: 1.04 },
+  { w: 1.02, h: 1.15 },
+  { w: 1.14, h: 1.07 },
+  { w: 1.06, h: 1.19 },
+  { w: 1.18, h: 1.04 },
   { w: 1.02, h: 1.15 }
 ];
 
 const PHOTO_SCALES = [
   { w: 1.06, h: 1.5 },
+  { w: 1.02, h: 1.44 },
+  { w: 1.1, h: 1.42 },
+  { w: 1.04, h: 1.56 },
+  { w: 1.06, h: 1 },
   { w: 1.02, h: 1.44 },
   { w: 1.1, h: 1.42 },
   { w: 1.04, h: 1.56 }
@@ -37,7 +45,6 @@ const FLOAT_EMOJIS = [
   { symbol: "✨", x: "28%", y: "28%", delay: "2.6s", dur: "9.1s", size: "1.1rem" },
   { symbol: "❤️", x: "72%", y: "42%", delay: "1.5s", dur: "10.5s", size: "1.25rem" }
 ];
-const HEART_ROAD_COUNT = 3;
 
 export default function App() {
   const [scrollTop, setScrollTop] = useState(0);
@@ -118,6 +125,9 @@ export default function App() {
 
   const cards = useMemo(() => {
     const photos = getAlbumPhotoUrls();
+    const photo5 = getAlbumPhotoUrlByStem("photo-5");
+    const photo8 = getAlbumPhotoUrlByStem("photo-8");
+    const photo9 = getAlbumPhotoUrlByStem("photo-9");
     const { recipientName, headline, lines, signature } = birthdayMessageRu;
     let photoSlot = 0;
 
@@ -156,9 +166,8 @@ export default function App() {
       const b = blocks[i];
       out.push(b);
 
-      // Keep headline standalone; alternate only after it:
-      // headline, then wish card -> photo card -> wish card -> photo card...
-      if (i === 0) continue;
+      // Keep headline standalone and do not append a regular photo after signature.
+      if (i === 0 || i === blocks.length - 1) continue;
 
       const image = photos[photoSlot];
       if (!image) continue;
@@ -169,15 +178,18 @@ export default function App() {
         key: `photo-${slot}`,
         kind: "photo",
         image,
+        imageSize: "cover",
+        imagePosition: image === photo5 ? "center top" : "center",
+        imageBg: undefined,
         imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
         className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
         variant: ["sage", "blush", "linen", "parchment", "lavender", "sky"][slot % 6],
         tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
-        scale: PHOTO_SCALES[slot % PHOTO_SCALES.length]
+        scale: image === photo5 ? { w: 1.02, h: 1.82 } : PHOTO_SCALES[slot % PHOTO_SCALES.length]
       });
     }
 
-    for (let i = 0; i < HEART_ROAD_COUNT; i += 1) {
+    const pushHeartRoadCard = (i) => {
       out.push({
         key: `heart-road-${i}`,
         kind: "hearts",
@@ -186,7 +198,30 @@ export default function App() {
         tiltDeg: [-0.8, 0.9, -0.6, 0.7][i % 4],
         scale: { w: 1.06, h: 0.92 }
       });
-    }
+    };
+
+    const pushFixedPhotoCard = (image, key, slot) => {
+      out.push({
+        key,
+        kind: "photo",
+        image,
+        imageSize: "cover",
+        imagePosition: image === photo5 ? "center top" : "center",
+        imageBg: undefined,
+        imageAlt: recipientName ? `Фото — ${recipientName}` : "Фото",
+        className: ["faster", "slower vertical", "faster1", "faster"][slot % 4],
+        variant: ["sage", "blush", "linen", "parchment", "lavender", "sky"][slot % 6],
+        tiltDeg: [1.35, -1.15, 1.75, -1.55][slot % 4],
+        scale: image === photo5 ? { w: 1.02, h: 1.82 } : PHOTO_SCALES[slot % PHOTO_SCALES.length]
+      });
+    };
+
+    // Put dedicated photo-8 and photo-9 cards between the last three heart-road cards.
+    pushHeartRoadCard(0);
+    if (photo8) pushFixedPhotoCard(photo8, "heart-road-photo-8", 8);
+    pushHeartRoadCard(1);
+    if (photo9) pushFixedPhotoCard(photo9, "heart-road-photo-9", 9);
+    pushHeartRoadCard(3);
 
     return out;
   }, []);
@@ -357,6 +392,9 @@ export default function App() {
                 tiltDeg={card.tiltDeg}
                 image={card.kind === "photo" ? card.image : null}
                 imageAlt={card.kind === "photo" ? card.imageAlt : ""}
+                imageSize={card.kind === "photo" ? card.imageSize : undefined}
+                imagePosition={card.kind === "photo" ? card.imagePosition : undefined}
+                imageBg={card.kind === "photo" ? card.imageBg : undefined}
                 scaleW={card.scale.w}
                 scaleH={card.scale.h}
               >

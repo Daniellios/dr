@@ -4,6 +4,9 @@ export default function StampFlyCard({
   tiltDeg = 0,
   image = null,
   imageAlt = "",
+  imageSize = "cover",
+  imagePosition = "center",
+  imageBg = undefined,
   scaleW = 1,
   scaleH = 1,
   children
@@ -27,7 +30,12 @@ export default function StampFlyCard({
             <>
               <div
                 className="stamp-fly-photo"
-                style={{ backgroundImage: `url(${image})` }}
+                style={{
+                  backgroundImage: `url(${image})`,
+                  backgroundSize: imageSize,
+                  backgroundPosition: imagePosition,
+                  backgroundColor: imageBg
+                }}
                 role="img"
                 aria-label={imageAlt || undefined}
               />
