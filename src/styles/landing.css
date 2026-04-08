@@ -1033,6 +1033,8 @@ body::after {
   height: 100%;
   max-height: none;
   overflow-y: auto;
+  padding: 10px 14px 14px 10px;
+  box-sizing: border-box;
   animation: ticket-reveal-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
