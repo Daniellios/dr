@@ -26,6 +26,7 @@ const GIFT_STEPS = 4;
 const GIFT_OPEN_MS = 820;
 const GIFT_CLICKS_TO_OPEN = 50;
 const TICKET_FLYOUT_MS = 1200;
+const GIFT_PULSE_UNTIL_CLICKS = 20;
 const FLOAT_EMOJIS = [
   { symbol: "❤️", x: "8%", y: "14%", delay: "0s", dur: "9.5s", size: "1.35rem" },
   { symbol: "🎂", x: "86%", y: "18%", delay: "1.2s", dur: "10.2s", size: "1.45rem" },
@@ -50,6 +51,7 @@ export default function App() {
   const [giftOpening, setGiftOpening] = useState(false);
 
   const albumScrollRef = useRef(null);
+  const giftStageRef = useRef(null);
   const giftClicksRef = useRef(giftClicks);
   const giftUnwrappedRef = useRef(giftUnwrapped);
   const giftOpeningRef = useRef(giftOpening);
@@ -232,6 +234,18 @@ export default function App() {
   const onGiftClick = useCallback(() => {
     if (giftUnwrapped || giftOpening) return;
 
+    if (giftStageRef.current?.animate) {
+      giftStageRef.current.animate(
+        [
+          { transform: "translate3d(0, 0, 0) scale(1)" },
+          { transform: "translate3d(0, 0, 0) scale(0.975)" },
+          { transform: "translate3d(0, 0, 0) scale(1.01)" },
+          { transform: "translate3d(0, 0, 0) scale(1)" }
+        ],
+        { duration: 170, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+      );
+    }
+
     setGiftClicks((prev) => {
       const next = Math.min(GIFT_CLICKS_TO_OPEN, prev + 1);
       const progress = next / GIFT_CLICKS_TO_OPEN;
@@ -240,7 +254,29 @@ export default function App() {
     });
   }, [giftOpening, giftUnwrapped]);
   const ticketVisible = giftUnwrapped && ticketReady && !ticketDismissed;
-  const giftClicksLeft = Math.max(0, GIFT_CLICKS_TO_OPEN - giftClicks);
+  const shouldGiftPulse =
+    introHidden &&
+    giftClicks > 0 &&
+    giftClicks <= GIFT_PULSE_UNTIL_CLICKS &&
+    !giftOpening &&
+    !giftUnwrapped;
+  const shouldGiftRumble =
+    introHidden &&
+    giftClicks > GIFT_PULSE_UNTIL_CLICKS &&
+    giftClicks < GIFT_CLICKS_TO_OPEN &&
+    !giftOpening &&
+    !giftUnwrapped;
+  const giftHintText = giftUnwrapped
+    ? "Открыто"
+    : giftClicks >= 40
+      ? "Та-да...!"
+      : giftClicks >= 30
+        ? "Вот-вот появится!"
+        : giftClicks >= 20
+          ? "Еще совсем чуть-чуть!"
+          : giftClicks >= 10
+            ? "Там что-то есть!"
+            : "Кликай, чтобы открыть";
 
   return (
     <main className="album-page">
@@ -345,8 +381,8 @@ export default function App() {
             }}
           >
             <div
-              className={`gift-wrapper${introHidden && scrollAtEnd ? " gift-wrapper--active" : ""}${introHidden && giftStep > 0 && !giftOpening && !giftUnwrapped ? " gift-wrapper--rumble" : ""
-                }${giftOpening ? " gift-wrapper--opening" : ""}${giftUnwrapped ? " gift-wrapper--open" : ""}`}
+              className={`gift-wrapper${introHidden && scrollAtEnd ? " gift-wrapper--active" : ""}${shouldGiftRumble ? " gift-wrapper--rumble" : ""
+                }${shouldGiftPulse ? " gift-wrapper--pulse" : ""}${giftOpening ? " gift-wrapper--opening" : ""}${giftUnwrapped ? " gift-wrapper--open" : ""}`}
               aria-label="Подарок"
               role="button"
               tabIndex={0}
@@ -355,7 +391,7 @@ export default function App() {
                 if (e.key === "Enter" || e.key === " ") onGiftClick();
               }}
             >
-              <div className="gift-stage">
+              <div ref={giftStageRef} className="gift-stage">
                 <div className="gift-base" style={{ backgroundImage: `url(${giftBoxImage})` }} />
                 <div className="gift-lid" style={{ backgroundImage: `url(${giftBoxImage})` }} />
                 <div className="gift-glow" aria-hidden="true" />
@@ -372,11 +408,7 @@ export default function App() {
                   </div>
                 ) : null}
                 <div className="gift-hint" aria-hidden="true">
-                  {giftUnwrapped
-                    ? "Открыто"
-                    : giftClicks > 0
-                      ? `Ещё ${giftClicksLeft}…`
-                      : "Кликай, чтобы открыть"}
+                  {giftHintText}
                 </div>
               </div>
             </div>

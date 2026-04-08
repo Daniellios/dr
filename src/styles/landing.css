@@ -454,6 +454,18 @@ body::after {
   }
 }
 
+@keyframes gift-pulse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: drop-shadow(0 0 0 rgba(232, 93, 117, 0));
+  }
+  50% {
+    transform: translate3d(0, 0, 0) scale(1.03);
+    filter: drop-shadow(0 0 16px rgba(232, 93, 117, 0.36));
+  }
+}
+
 .gift-wrapper {
   width: min(66vh, 720px);
   max-width: 92vw;
@@ -623,6 +635,10 @@ body::after {
 
 .gift-wrapper--rumble .gift-stage {
   animation: gift-rumble 120ms linear infinite;
+}
+
+.gift-wrapper--pulse .gift-stage {
+  animation: gift-pulse 1100ms ease-in-out infinite;
 }
 
 @keyframes gift-lid-open {
