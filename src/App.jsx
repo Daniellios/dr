@@ -345,7 +345,7 @@ export default function App() {
             }}
           >
             <div
-              className={`gift-wrapper${introHidden && scrollAtEnd ? " gift-wrapper--active" : ""}${introHidden && scrollAtEnd && giftStep > 0 && !giftOpening && !giftUnwrapped ? " gift-wrapper--rumble" : ""
+              className={`gift-wrapper${introHidden && scrollAtEnd ? " gift-wrapper--active" : ""}${introHidden && giftStep > 0 && !giftOpening && !giftUnwrapped ? " gift-wrapper--rumble" : ""
                 }${giftOpening ? " gift-wrapper--opening" : ""}${giftUnwrapped ? " gift-wrapper--open" : ""}`}
               aria-label="Подарок"
               role="button"
